@@ -52,12 +52,28 @@ $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
 Write-Output $LatestNumber
 
 # Increase number by one
-$LatestNumber = $LatestNumber -replace "-",""
+$LatestNumber = $LatestNumber -replace "-", ""
 $LatestNumber = $LatestNumber -as [int]
-$LatestNumber = $LatestNumber +1
-Write-Output $LatestNumber
+$NewNumber = $LatestNumber + 1
+$NewNumber = $NewNumber -as [string]
+
 
 # Fill up with trailing zeros
+$ZerosToFillUp = 10 - $NewNumber.Length
+Write-Output $ZerosToFillUp
+
+for ($i = 0; $i -lt $ZerosToFillUp; $i++)
+ {
+    $NewNumber = "0" + $NewNumber
+}
+# Add dashes
+$NewNumber = $NewNumber.Insert(7,"-")
+$NewNumber = $NewNumber.Insert(4,"-")
+
+Write-Output $NewNumber
+
+
+
 
 
 
