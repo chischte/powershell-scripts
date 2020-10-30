@@ -26,16 +26,6 @@ $NewEntryString = "$NewDrwNumber;$NewDrwName;$NewDrwProject;$NewDrwDesigner;$New
 
 $NewEntryString | Add-Content -Path $GlobalCsvPath
 
-
-
-# Get latest drawing number of Global File:
-
-$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
-$LastRowGlobal = $CsvGlobal | Select-Object -Last 1
-$LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
-Write-Output $LatestNumber
-
-
 # Get latest project where user worked on:
 
 $CsvGlobalFilterdByUsername = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";" |
@@ -47,11 +37,38 @@ Write-Output $PrevProject
 # Ask user to enter project and Name:
 Write-Output "Bitte Projektname eingeben oder Enter drücken für $PrevProject :"
 $CurrentProject = Read-Host 
+if ([string]::IsNullOrEmpty($CurrentProject)) {
+    $CurrentProject = $PrevProject
+}
 Write-Output $CurrentProject
 
 $CurrentName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
-#
+
+# Get latest drawing number
+$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
+$LastRowGlobal = $CsvGlobal | Select-Object -Last 1
+$LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
+Write-Output $LatestNumber
+
+# Increase number by one
+$LatestNumber = $LatestNumber -replace "-",""
+$LatestNumber = $LatestNumber -as [int]
+$LatestNumber = $LatestNumber +1
+Write-Output $LatestNumber
+
+# Fill up with trailing zeros
+
+
+
+
+#$SplitLatestNumberArray = $LatestNumber.Split("-")
+Write-Output $SplitLatestNumberArray[2]
+
+
+
+# Create new entry in global csv
+
 
 
 
