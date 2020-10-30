@@ -4,14 +4,14 @@
 $GlobalCsvPath = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
 
-# PREP read and show global csv file:
+# read and show global csv file:
 
-$P = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
+$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
 
  
 Write-Output " "
 Write-Output "Meine Zeichnungsnummern:"
-$P | Format-Table -AutoSize
+$CsvGlobal | Format-Table -AutoSize
 
 
 # Add entry to csv file
@@ -26,6 +26,17 @@ $NewEntryString = "$NewDrwNumber;$NewDrwName;$NewDrwProject;$NewDrwDesigner;$New
 
 $NewEntryString | Add-Content -Path $GlobalCsvPath
 
+
+
+# Get latest drawing number of Global File
+$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
+$LastRowGlobal = $CsvGlobal | Select-Object -Last 1
+$LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
+echo $LatestNumber
+
+# Get all projects where user worked on
+
+# Get latest project where user worked on
 
 
 
