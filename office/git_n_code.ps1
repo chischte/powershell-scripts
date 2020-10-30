@@ -8,4 +8,5 @@ start-process "gitkraken.exe"
 #>
 
 start-process "C:\Users\michael.wettstein\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Axosoft, LLC\GitKraken.lnk"
+start-process "C:\Users\michael.wettstein\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Visual Studio Code\Visual Studio Code.lnk"
 
