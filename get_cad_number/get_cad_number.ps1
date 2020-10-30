@@ -58,9 +58,12 @@ $NewEntryString | Add-Content -Path $GlobalCsvPath
 $CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
 $CsvGlobal | Format-Table -AutoSize
 
-Write-Output "Die Zeichnungsnummer für $NewDrwName ist $NewNumber und wurde in die Zwischenablage kopiert."
-Write-Output "---------------------------"
+Write-Output "Die neue Zeichnungsnummer wurde in die Zwischenablage kopiert."
+Write-Output "--------------------------------------------------------------"
+Write-Output ""
+Write-Output ""
 
-# ...make a function to show number list
+# ... Press W für wiederholen und Esc um das fenster zu schliessen
+
 
 exit
