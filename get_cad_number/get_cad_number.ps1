@@ -16,11 +16,11 @@ $CsvGlobal | Format-Table -AutoSize
 
 # Add entry to csv file
 
-$NewDrwNumber=    "0000-000-006"
-$NewDrwName=      "Zeichnung 6"
-$NewDrwProject=   "MHC"
-$NewDrwDesigner=  $env:UserName
-$NewDrwDate=      Get-Date -Format "dddd dd/MM/yyyy HH:mm"
+$NewDrwNumber = "0000-000-006"
+$NewDrwName = "Zeichnung 6"
+$NewDrwProject = "MHC"
+$NewDrwDesigner = $env:UserName
+$NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm"
 
 $NewEntryString = "$NewDrwNumber;$NewDrwName;$NewDrwProject;$NewDrwDesigner;$NewDrwDate"
 
@@ -28,20 +28,32 @@ $NewEntryString | Add-Content -Path $GlobalCsvPath
 
 
 
-# Get latest drawing number of Global File
+# Get latest drawing number of Global File:
+
 $CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
 $LastRowGlobal = $CsvGlobal | Select-Object -Last 1
 $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
-echo $LatestNumber
-
-# Get all projects where user worked on
-
-# Get latest project where user worked on
+Write-Output $LatestNumber
 
 
+# Get latest project where user worked on:
+
+$CsvGlobalFilterdByUsername = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";" |
+Where-Object ERSTELLER -like $env:UserName |
+Select-Object -Last 1
+$PrevProject = $CsvGlobalFilterdByUsername.PROJEKT
+Write-Output $PrevProject
+
+# Ask user to enter project and Name:
+Write-Output "Bitte Projektname eingeben oder Enter drücken für $PrevProject :"
+$CurrentProject = Read-Host 
+Write-Output $CurrentProject
+
+$CurrentName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
+
+#
 
 
-# PREP copy global csv file  to local file:
 
 
 
