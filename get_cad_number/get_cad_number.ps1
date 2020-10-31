@@ -1,10 +1,23 @@
-﻿# Define path of "Versuchszeichnungen"
+﻿# Todo Check if entry in csv worked for the extremly unlikely case a collision happend 
+# Show only last ten personal and public entries
+
+$Dashline = "-------------------------------------------------------------------------------"
+
+# Define path of "Versuchszeichnungen"
 #$PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 $PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
-# Read and show global csv file:
+# Read global csv file:
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
-$NumberList | Format-Table -AutoSize
+
+# Show last n entries of numberlist:
+$NumberOfEntries = 100
+Write-Output ""
+Write-Output $Dashline
+Write-Output "LETZTE $NumberOfEntries EINTRÄGE IN DER NUMMERNLISTE:"
+Write-Output $Dashline
+$NumberListLastLines = $NumberList | Select-Object -Last $NumberOfEntries
+$NumberListLastLines | Format-Table -AutoSize
 
 # Get latest project where user worked on:
 $NumberListFilterdByUsername = Import-Csv -Path "$PathToNumberList" -Delimiter ";" |
@@ -13,11 +26,11 @@ Select-Object -Last 1
 $PrevProject = $NumberListFilterdByUsername.PROJEKT
 
 # Ask user to enter project:
-Write-Output "Bitte <Projektname> eingeben oder <Enter> drücken für <$PrevProject> :"
-$NewProject = Read-Host 
+$NewProject = Read-Host -Prompt "Bitte Projektname eingeben oder <Enter> drücken für <$PrevProject>"
 if ([string]::IsNullOrEmpty($NewProject)) {
     $NewProject = $PrevProject
 }
+
 # Ask user to enter Drawingname:
 $NewDrwName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
@@ -37,7 +50,6 @@ Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $true
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
 $LastRowGlobal = $NumberList | Select-Object -Last 1
 $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
-Write-Output $LatestNumber
 
 # Increase number by one
 $LatestNumber = $LatestNumber -replace "-", ""
@@ -67,16 +79,21 @@ $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
 Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
 $NewEntryString | Add-Content -Path $PathToNumberList
 
-# Read and show global csv file:
-$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
-$NumberList | Format-Table -AutoSize
+Write-Output $Dashline
 
-Write-Output "Die neue Zeichnungsnummer wurde in die Zwischenablage kopiert."
-Write-Output "--------------------------------------------------------------"
-Write-Output ""
+# Show latest entry:
+$NumberOfEntries = 1
+$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+$NumberListLastLines = $NumberList | Select-Object -Last $NumberOfEntries
+$NumberListLastLines | Format-Table -AutoSize
+
+Write-Output "Die neue Zeichnungsnummer $NewNumber wurde in die Zwischenablage kopiert."
 Write-Output ""
 
 # ... Press W für wiederholen und Esc um das fenster zu schliessen
 
+$UserInput = Read-Host -Prompt 'Enter Drücken um das Fenster zu schliessen'
 
-exit
+#While ($UserInput -eq "n")
+
+#exit
