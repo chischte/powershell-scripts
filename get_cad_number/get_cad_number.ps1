@@ -1,5 +1,4 @@
 ﻿# Todo Check if entry in csv worked for the extremly unlikely case a collision happend 
-# Show only last ten personal and public entries
 
 $Dashline = "-------------------------------------------------------------------------------"
 
@@ -11,7 +10,7 @@ $PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versu
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
 
 # Show last n entries of numberlist:
-$NumberOfEntries = 100
+$NumberOfEntries = 200
 Write-Output ""
 Write-Output $Dashline
 Write-Output "LETZTE $NumberOfEntries EINTRÄGE IN DER NUMMERNLISTE:"
@@ -31,47 +30,46 @@ if ([string]::IsNullOrEmpty($NewProject)) {
     $NewProject = $PrevProject
 }
 
-# Ask user to enter Drawingname:
+# Ask user to enter drawingname:
 $NewDrwName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
 # Check if CSV is blocked:
 $FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
-
 While ($FileIsBlocked) {
     Write-Output "Nummernliste ist besetzt durch einen anderen Benutzer!"
     Read-Host -Prompt 'Enter Drücken um es erneut zu versuchen' 
     $FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
 }
 
-# Set CSV as readonly (block access for other users)
+# Set CSV as readonly (block access for other users):
 Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $true
 
-# Get latest drawing number
+# Get latest drawing number:
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
 $LastRowGlobal = $NumberList | Select-Object -Last 1
 $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
 
-# Increase number by one
+# Increase number by one:
 $LatestNumber = $LatestNumber -replace "-", ""
 $LatestNumber = $LatestNumber -as [int]
 $NewNumber = $LatestNumber + 1
 $NewNumber = $NewNumber -as [string]
 
-# Fill up with trailing zeros
+# Fill up with trailing zeros:
 $ZerosToFillUp = 10 - $NewNumber.Length
 
 for ($i = 0; $i -lt $ZerosToFillUp; $i++) {
     $NewNumber = "0" + $NewNumber
 }
 
-# Add dashes
+# Add dashes:
 $NewNumber = $NewNumber.Insert(7, "-")
 $NewNumber = $NewNumber.Insert(4, "-")
 
-# Add new number to clipboard
+# Add new number to clipboard:
 Set-Clipboard $NewNumber
 
-#Create new Entry for Csv
+# Create new Entry for CSV:
 $NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm"
 $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
 
@@ -90,10 +88,4 @@ $NumberListLastLines | Format-Table -AutoSize
 Write-Output "Die neue Zeichnungsnummer $NewNumber wurde in die Zwischenablage kopiert."
 Write-Output ""
 
-# ... Press W für wiederholen und Esc um das fenster zu schliessen
-
 $UserInput = Read-Host -Prompt 'Enter Drücken um das Fenster zu schliessen'
-
-#While ($UserInput -eq "n")
-
-#exit
