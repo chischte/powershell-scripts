@@ -1,16 +1,16 @@
 ﻿# Define path of "Versuchszeichnungen"
-$GlobalCsvPath = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
-
+#$PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
+$PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
 # Read and show global csv file:
-$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
-$CsvGlobal | Format-Table -AutoSize
+$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+$NumberList | Format-Table -AutoSize
 
 # Get latest project where user worked on:
-$CsvGlobalFilterdByUsername = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";" |
+$NumberListFilterdByUsername = Import-Csv -Path "$PathToNumberList" -Delimiter ";" |
 Where-Object ERSTELLER -like $env:UserName |
 Select-Object -Last 1
-$PrevProject = $CsvGlobalFilterdByUsername.PROJEKT
+$PrevProject = $NumberListFilterdByUsername.PROJEKT
 
 # Ask user to enter project:
 Write-Output "Bitte <Projektname> eingeben oder <Enter> drücken für <$PrevProject> :"
@@ -18,12 +18,28 @@ $NewProject = Read-Host
 if ([string]::IsNullOrEmpty($NewProject)) {
     $NewProject = $PrevProject
 }
-#Ask user to enter Drawingname:
+# Ask user to enter Drawingname:
 $NewDrwName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
+
+
+# Check if CSV is blocked:
+$FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
+
+While ($FileIsBlocked) {
+    Write-Output "Nummernliste ist besetzt durch einen anderen Benutzer!"
+    Read-Host -Prompt 'Enter Drücken um es erneut zu versuchen' 
+    $FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
+}
+
+# Set CSV as readonly (block access for other users)
+Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $true
+
+Read-Host -Prompt 'PAUSE BIS ENTER' 
+
 # Get latest drawing number
-$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
-$LastRowGlobal = $CsvGlobal | Select-Object -Last 1
+$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+$LastRowGlobal = $NumberList | Select-Object -Last 1
 $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
 Write-Output $LatestNumber
 
@@ -47,16 +63,18 @@ $NewNumber = $NewNumber.Insert(4, "-")
 # Add new number to clipboard
 Set-Clipboard $NewNumber
 
-#Create new Entry in Csv
+#Create new Entry for Csv
 $NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm"
 
 $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
 
-$NewEntryString | Add-Content -Path $GlobalCsvPath
+# Unblock file and make new entry:
+Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
+$NewEntryString | Add-Content -Path $PathToNumberList
 
 # read and show global csv file:
-$CsvGlobal = Import-Csv -Path "$GlobalCsvPath" -Delimiter ";"
-$CsvGlobal | Format-Table -AutoSize
+$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+$NumberList | Format-Table -AutoSize
 
 Write-Output "Die neue Zeichnungsnummer wurde in die Zwischenablage kopiert."
 Write-Output "--------------------------------------------------------------"
