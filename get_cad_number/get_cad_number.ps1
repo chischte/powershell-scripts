@@ -21,8 +21,6 @@ if ([string]::IsNullOrEmpty($NewProject)) {
 # Ask user to enter Drawingname:
 $NewDrwName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
-
-
 # Check if CSV is blocked:
 $FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
 
@@ -34,8 +32,6 @@ While ($FileIsBlocked) {
 
 # Set CSV as readonly (block access for other users)
 Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $true
-
-Read-Host -Prompt 'PAUSE BIS ENTER' 
 
 # Get latest drawing number
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
@@ -65,14 +61,13 @@ Set-Clipboard $NewNumber
 
 #Create new Entry for Csv
 $NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm"
-
 $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
 
 # Unblock file and make new entry:
 Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
 $NewEntryString | Add-Content -Path $PathToNumberList
 
-# read and show global csv file:
+# Read and show global csv file:
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
 $NumberList | Format-Table -AutoSize
 
