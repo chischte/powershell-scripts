@@ -1,10 +1,10 @@
-﻿# Todo Check if entry in csv worked for the extremly unlikely case a collision happend 
-
+﻿
 $Dashline = "-------------------------------------------------------------------------------"
 
 # Define path of "Versuchszeichnungen"
-#$PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
-$PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
+$PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
+# Path @Flugchsichte
+#$PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
 # Read global csv file:
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
@@ -76,6 +76,28 @@ $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
 # Unblock file and make new entry:
 Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
 $NewEntryString | Add-Content -Path $PathToNumberList
+
+
+# Check new entry was successful
+Read-Host -Prompt "Pause um Checkfunktion zu prüfen"
+
+$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+$LastRowGlobal = $NumberList | Select-Object -Last 1
+
+$EntryFailed = $false
+
+if($LastRowGlobal.ZEICHNUNGSNUMMER -ne $NewNumber) {$EntryFailed=$true}
+if($LastRowGlobal.NAME -ne $NewDrwName) {$EntryFailed=$true}
+if($LastRowGlobal.PROJEKT -ne $NewProject) {$EntryFailed=$true}
+if($LastRowGlobal.ERSTELLER -ne $env:UserName) {$EntryFailed=$true}
+if($LastRowGlobal.DATUM -ne $NewDrwDate) {$EntryFailed=$true}
+
+if($EntryFailed -eq $true)
+{
+    Read-Host -Prompt "Entry Failed"
+}
+
+# If entry failed create new number and try again
 
 Write-Output $Dashline
 
