@@ -33,71 +33,83 @@ if ([string]::IsNullOrEmpty($NewProject)) {
 # Ask user to enter drawingname:
 $NewDrwName = Read-Host -Prompt 'Bitte Name des Teils oder der Baugruppe eingeben' 
 
-# Check if CSV is blocked:
-$FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
-While ($FileIsBlocked) {
-    Write-Output "Nummernliste ist besetzt durch einen anderen Benutzer!"
-    Read-Host -Prompt 'Enter Drücken um es erneut zu versuchen' 
-    $FileIsBlocked = (Get-ChildItem $PathToNumberList).IsReadOnly
+function GetNewDrawingNumber {
+    # Get latest drawing number:
+    $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+    $LastRowGlobal = $NumberList | Select-Object -Last 1
+    $LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
+
+    # Increase number by one:
+    $LatestNumber = $LatestNumber -replace "-", ""
+    $LatestNumber = $LatestNumber -as [int]
+    $NewNumber = $LatestNumber + 1
+    $NewNumber = $NewNumber -as [string]
+
+    # Fill up with trailing zeros:
+    $ZerosToFillUp = 10 - $NewNumber.Length
+
+    for ($i = 0; $i -lt $ZerosToFillUp; $i++) {
+        $NewNumber = "0" + $NewNumber
+    }
+
+    # Add dashes:
+    $NewNumber = $NewNumber.Insert(7, "-")
+    $NewNumber = $NewNumber.Insert(4, "-")
+
+    # Add new number to clipboard:
+    Set-Clipboard $NewNumber
+
+    Return $NewNumber
 }
 
-# Set CSV as readonly (block access for other users):
-Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $true
+$NewNumber = GetNewDrawingNumber
+$NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm";
 
-# Get latest drawing number:
-$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
-$LastRowGlobal = $NumberList | Select-Object -Last 1
-$LatestNumber = $LastRowGlobal.ZEICHNUNGSNUMMER
+function CreateNewCsvEntry {
+    $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
+    Return $NewEntryString
+}
+CreateNewCsvEntry
 
-# Increase number by one:
-$LatestNumber = $LatestNumber -replace "-", ""
-$LatestNumber = $LatestNumber -as [int]
-$NewNumber = $LatestNumber + 1
-$NewNumber = $NewNumber -as [string]
 
-# Fill up with trailing zeros:
-$ZerosToFillUp = 10 - $NewNumber.Length
+$NewEntryString = CreateNewCsvEntry
 
-for ($i = 0; $i -lt $ZerosToFillUp; $i++) {
-    $NewNumber = "0" + $NewNumber
+
+function WriteNewEntryToCsv {
+    # Write new Entry to CSV:
+    Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
+    $NewEntryString | Add-Content -Path $PathToNumberList
 }
 
-# Add dashes:
-$NewNumber = $NewNumber.Insert(7, "-")
-$NewNumber = $NewNumber.Insert(4, "-")
+WriteNewEntryToCsv
 
-# Add new number to clipboard:
-Set-Clipboard $NewNumber
+function CheckIfEntryWasSuccess {
 
-# Create new Entry for CSV:
-$NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm"
-$NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
+    $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
+    $LastRowGlobal = $NumberList | Select-Object -Last 1
 
-# Unblock file and make new entry:
-Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
-$NewEntryString | Add-Content -Path $PathToNumberList
+    $EntryWasSuccess = $true
 
+    if ($LastRowGlobal.ZEICHNUNGSNUMMER -ne $NewNumber) { $EntryWasSuccess = $false }
 
-# Check new entry was successful
-Read-Host -Prompt "Pause um Checkfunktion zu prüfen"
-
-$NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
-$LastRowGlobal = $NumberList | Select-Object -Last 1
-
-$EntryFailed = $false
-
-if($LastRowGlobal.ZEICHNUNGSNUMMER -ne $NewNumber) {$EntryFailed=$true}
-if($LastRowGlobal.NAME -ne $NewDrwName) {$EntryFailed=$true}
-if($LastRowGlobal.PROJEKT -ne $NewProject) {$EntryFailed=$true}
-if($LastRowGlobal.ERSTELLER -ne $env:UserName) {$EntryFailed=$true}
-if($LastRowGlobal.DATUM -ne $NewDrwDate) {$EntryFailed=$true}
-
-if($EntryFailed -eq $true)
-{
-    Read-Host -Prompt "Entry Failed"
+    if ($LastRowGlobal.NAME -ne $NewDrwName) { $EntryWasSuccess = $false }
+    
+    if ($LastRowGlobal.PROJEKT -ne $NewProject) { $EntryWasSuccess = $false }
+    
+    if ($LastRowGlobal.ERSTELLER -ne $env:UserName) { $EntryWasSuccess = $false }
+    
+    if ($LastRowGlobal.DATUM -ne $NewDrwDate) { $EntryWasSuccess = $false }
+    
+    Return $EntryWasSuccess
 }
 
-# If entry failed create new number and try again
+While ((CheckIfEntryWasSuccess) -ne $true) {
+    
+    Read-Host -Prompt 'Schreiben der Nummernliste nicht möglich, <Enter> Drücken um es erneut zu versuchen' 
+    WriteNewEntryToCsv
+}
+
+Write-Output $NewNumber
 
 Write-Output $Dashline
 
