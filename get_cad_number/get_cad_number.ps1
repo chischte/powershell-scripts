@@ -1,5 +1,4 @@
-﻿
-$Dashline = "-------------------------------------------------------------------------------"
+﻿$Dashline = "-------------------------------------------------------------------------------"
 
 # Define path of "Versuchszeichnungen"
 $PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
@@ -61,7 +60,6 @@ function GetNewDrawingNumber {
 
     Return $NewNumber
 }
-
 $NewNumber = GetNewDrawingNumber
 $NewDrwDate = Get-Date -Format "dddd dd/MM/yyyy HH:mm";
 
@@ -69,18 +67,13 @@ function CreateNewCsvEntry {
     $NewEntryString = "$NewNumber;$NewDrwName;$NewProject;$env:UserName;$NewDrwDate"
     Return $NewEntryString
 }
-CreateNewCsvEntry
-
-
 $NewEntryString = CreateNewCsvEntry
-
 
 function WriteNewEntryToCsv {
     # Write new Entry to CSV:
     Set-ItemProperty -path $PathToNumberList -name IsReadOnly -Value $false
     $NewEntryString | Add-Content -Path $PathToNumberList
 }
-
 WriteNewEntryToCsv
 
 function CheckIfEntryWasSuccess {
@@ -104,12 +97,9 @@ function CheckIfEntryWasSuccess {
 }
 
 While ((CheckIfEntryWasSuccess) -ne $true) {
-    
     Read-Host -Prompt 'Schreiben der Nummernliste nicht möglich, <Enter> Drücken um es erneut zu versuchen' 
     WriteNewEntryToCsv
 }
-
-Write-Output $NewNumber
 
 Write-Output $Dashline
 
@@ -122,4 +112,4 @@ $NumberListLastLines | Format-Table -AutoSize
 Write-Output "Die neue Zeichnungsnummer $NewNumber wurde in die Zwischenablage kopiert."
 Write-Output ""
 
-$UserInput = Read-Host -Prompt 'Enter Drücken um das Fenster zu schliessen'
+Read-Host -Prompt 'Enter Drücken um das Fenster zu schliessen'
