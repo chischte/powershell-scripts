@@ -1,9 +1,9 @@
 ﻿$Dashline = "-------------------------------------------------------------------------------"
 
 # Define path of "Versuchszeichnungen"
-$PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
-# Path @Flugchsichte
-#$PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
+$PathToNumberList = "G:\Packaging_Technology\PT_Products\Entwicklung\Zchng-Nummern\99990-999-XXX.csv"
+# @OfficeGit:     $PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
+# @Flugchsichte:  $PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
 # Read global csv file:
 $NumberList = Import-Csv -Path "$PathToNumberList" -Delimiter ";"
