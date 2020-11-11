@@ -1,7 +1,7 @@
 ﻿$Dashline = "-------------------------------------------------------------------------------"
 
 # Define path of "Versuchszeichnungen"
-$PathToNumberList = "G:\Packaging_Technology\PT_Products\Entwicklung\Zchng-Nummern\99990-999-XXX.csv"
+$PathToNumberList = "G:\Packaging_Technology\PT_Products\Entwicklung\Zchng-Nummern\9999-999-XXX.csv"
 # @OfficeGit:     $PathToNumberList = "C:\Users\michael.wettstein\Documents\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 # @Flugchsichte:  $PathToNumberList = "C:\git\powershell-scripts\get_cad_number\0000-000-XXX_Versuchszeichnungen.csv"
 
