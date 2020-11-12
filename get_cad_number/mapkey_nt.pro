@@ -1,5 +1,17 @@
 ! TODO: Skript erstellen um git files an richtigen ort zu verschieben
-! TODO: Permanent Mapkey erstellen für neuladen von mapkey nt für Entwicklungszwecke
+! TODO: Permanent Mapkey erstellen für neuladen von mapkey nt für Entwicklungszwecke ODER
+! Mapkey lädt sich jedes mal automatisch selbst
+! --------------------------------------------------------------------------------------------------
+
+! 1.Der user startet mapkey nt
+! 2.mapkey nt aktualisiert mapkey nt_run_manager und ruft es auf
+! 3.mapkey nt_run_manager startet das powershell script und macht pause
+! 4.das powershell script erzeugt anhand der benutzereingaben ein neues mapkey
+! 5. der user drückt in mapkey nt_run_manager auf fortfahren
+! 6.Mapkey nt_run_manager lädt das neu generierte mapkey und ruft es auf
+
+
+
 ! --------------------------------------------------------------------------------------------------
 mapkey nt \
 @MAPKEY_LABEL\
@@ -7,6 +19,9 @@ Neues 0000 Teil;\
 @MAPKEY_NAME\
 Erstellt ein neues Teil mit einer 0000 Versuchszeichnungsnummer;\
 %nt_start_powershell;\
+@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
+@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
+@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
 @MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
 %nt_load_new_mapkey;\
 @MANUAL_PAUSEEnter druecken um neues Teil zu generieren;\
