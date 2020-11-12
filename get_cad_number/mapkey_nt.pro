@@ -21,7 +21,9 @@ mapkey(continued) ~ Trail `UI Desktop` `UI Desktop` `DLG_PREVIEW_POST` `file_ope
 mapkey(continued) ~ Update `file_open` `Inputname` \
 mapkey(continued) `C:\\git\\powershell-scripts\\get_cad_number\\mapkey_nt.pro`;\
 mapkey(continued) ~ Command `ProFileSelPushOpen_Standard@context_dlg_open_cmd` ;\
-mapkey(continued) ~ Activate `ribbon_options_dialog` `OkPshBtn`;
+mapkey(continued) ~ Activate `ribbon_options_dialog` `OkPshBtn`;\
+%nt_run_manager;
+
 
 
 ! --------------------------------------------------------------------------------------------------
@@ -30,6 +32,7 @@ mapkey nt_run_manager \
 Neues 0000 Teil;\
 @MAPKEY_NAME\
 Erstellt ein neues Teil mit einer 0000 Versuchszeichnungsnummer;\
+@MANUAL_PAUSEYes, Run Manager wooooorks;\
 %nt_start_powershell;\
 @MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
 %nt_load_new_mapkey;\
