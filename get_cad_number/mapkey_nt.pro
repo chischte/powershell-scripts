@@ -20,9 +20,6 @@ Neues 0000 Teil;\
 Erstellt ein neues Teil mit einer 0000 Versuchszeichnungsnummer;\
 %nt_start_powershell;\
 @MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
-@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
-@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
-@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
 %nt_load_new_mapkey;\
 @MANUAL_PAUSEEnter druecken um neues Teil zu generieren;\
 %nt_fill_in_numbers;
@@ -30,7 +27,7 @@ Erstellt ein neues Teil mit einer 0000 Versuchszeichnungsnummer;\
 mapkey nt_start_powershell \
 mapkey(continued) @SYSTEMC:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe \
 mapkey(continued) -noexit -Command "& \
-mapkey(continued) '"C:\\Users\\michael.wettstein\\Documents\\git\\powershell-scripts\\get_cad_\
+mapkey(continued) '"C:\\git\\powershell-scripts\\get_cad_\
 mapkey(continued) number\\get_cad_number.ps1'";
 ! --------------------------------------------------------------------------------------------------
 mapkey nt_load_new_mapkey ~ Select `main_dlg_cur` `appl_casc`;\
@@ -41,8 +38,8 @@ mapkey(continued) ~ Close `ribbon_options_dialog` `ConfigLayout.ImportExportBtn`
 mapkey(continued) ~ Activate `ribbon_options_dialog` `ConfigLayout.Open`;\
 mapkey(continued) ~ Trail `UI Desktop` `UI Desktop` `DLG_PREVIEW_POST` `file_open`;\
 mapkey(continued) ~ Update `file_open` `Inputname` \
-mapkey(continued) `C:\\Users\\michael.wettstein\\Documents\\git\\powershell-scripts\\get_cad_n\
-mapkey(continued) umber\\mapkey_nt_fill_in_numbers.pro`;\
+mapkey(continued) `C:\\git\\powershell-scripts\\get_cad_number\\mapkey_nt_fill_in_numbers.pro`;\
+@MANUAL_PAUSEEnter druecken um neues Mapkey zu laden;\
 mapkey(continued) ~ Command `ProFileSelPushOpen_Standard@context_dlg_open_cmd` ;\
 mapkey(continued) ~ Activate `ribbon_options_dialog` `OkPshBtn`;
 
