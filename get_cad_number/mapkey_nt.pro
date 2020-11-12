@@ -10,10 +10,22 @@
 ! 5. der user drückt in mapkey nt_run_manager auf fortfahren
 ! 6.Mapkey nt_run_manager lädt das neu generierte mapkey und ruft es auf
 
+mapkey nt \
+Select `main_dlg_cur` `appl_casc`;\
+mapkey(continued) ~ Close `main_dlg_cur` `appl_casc`;~ Command `ProCmdRibbonOptionsDlg` ;\
+mapkey(continued) ~ Select `ribbon_options_dialog` `PageSwitcherPageList` 1 `ConfigLayout`;\
+mapkey(continued) ~ Select `ribbon_options_dialog` `ConfigLayout.ImportExportBtn`;\
+mapkey(continued) ~ Close `ribbon_options_dialog` `ConfigLayout.ImportExportBtn`;\
+mapkey(continued) ~ Activate `ribbon_options_dialog` `ConfigLayout.Open`;\
+mapkey(continued) ~ Trail `UI Desktop` `UI Desktop` `DLG_PREVIEW_POST` `file_open`;\
+mapkey(continued) ~ Update `file_open` `Inputname` \
+mapkey(continued) `C:\\git\\powershell-scripts\\get_cad_number\\mapkey_nt.pro`;\
+mapkey(continued) ~ Command `ProFileSelPushOpen_Standard@context_dlg_open_cmd` ;\
+mapkey(continued) ~ Activate `ribbon_options_dialog` `OkPshBtn`;
 
 
 ! --------------------------------------------------------------------------------------------------
-mapkey nt \
+mapkey nt_run_manager \
 @MAPKEY_LABEL\
 Neues 0000 Teil;\
 @MAPKEY_NAME\
